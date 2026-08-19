@@ -1,0 +1,15 @@
+{
+	"name": "adf-Partices",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "104d97aa-39af-47fb-a51a-c4a8571a1144",
+		"tenantId": "ca93c0fd-a3c3-45f7-be6c-e1fa7b4607d9"
+	}
+}
