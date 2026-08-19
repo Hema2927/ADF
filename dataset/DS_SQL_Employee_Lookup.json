@@ -5,6 +5,11 @@
 			"referenceName": "AzureSQL_hemasql",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"Employee": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "AzureSqlTable",
 		"schema": [
