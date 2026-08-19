@@ -1,5 +1,5 @@
 {
-	"name": "sql_to_storage",
+	"name": "pl_sql_to_storage",
 	"properties": {
 		"activities": [
 			{

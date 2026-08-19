@@ -1,5 +1,5 @@
 {
-	"name": "Employee_Filter_Pipeline",
+	"name": "pl_Employee_Filter",
 	"properties": {
 		"activities": [
 			{

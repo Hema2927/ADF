@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "EMP.CSV",
 				"folderPath": "target",
 				"fileSystem": "newcontainer"
 			},
