@@ -10,7 +10,7 @@
 		"schema": [],
 		"typeProperties": {
 			"schema": "dbo",
-			"table": "ADF_Table_List"
+			"table": "ForEachDemo"
 		}
 	}
 }
