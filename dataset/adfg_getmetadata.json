@@ -1,8 +1,8 @@
 {
-	"name": "output",
+	"name": "adfg_getmetadata",
 	"properties": {
 		"linkedServiceName": {
-			"referenceName": "AzureDataLakeStorage2",
+			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
 		"parameters": {
@@ -16,36 +16,30 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": "target",
+				"folderPath": "source",
 				"fileSystem": "newcontainer"
 			},
 			"columnDelimiter": ",",
 			"escapeChar": "\\",
-			"firstRowAsHeader": true,
+			"firstRowAsHeader": false,
 			"quoteChar": "\""
 		},
 		"schema": [
 			{
-				"name": "department_id",
 				"type": "String"
 			},
 			{
-				"name": "department_name",
 				"type": "String"
 			},
 			{
-				"name": "location",
 				"type": "String"
 			},
 			{
-				"name": "manager_name",
 				"type": "String"
 			},
 			{
-				"name": "budget",
 				"type": "String"
 			}
 		]
-	},
-	"type": "Microsoft.DataFactory/factories/datasets"
+	}
 }
