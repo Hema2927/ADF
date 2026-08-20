@@ -1,10 +1,10 @@
 {
-	"name": "pl_lookup_foreach",
+	"name": "pl_getdata",
 	"properties": {
 		"activities": [
 			{
-				"name": "Lookup1",
-				"type": "Lookup",
+				"name": "Get Metadata1",
+				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
 					"timeout": "0.12:00:00",
@@ -15,27 +15,21 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "AzureSqlSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
-					},
 					"dataset": {
-						"referenceName": "DS_SQL_Employee_Lookup",
-						"type": "DatasetReference",
-						"parameters": {
-							"Employee": "ForEachDemo"
-						}
+						"referenceName": "sql_getdata",
+						"type": "DatasetReference"
 					},
-					"firstRowOnly": false
+					"fieldList": [
+						"columnCount"
+					]
 				}
 			},
 			{
-				"name": "ForEach1",
-				"type": "ForEach",
+				"name": "If Condition1",
+				"type": "IfCondition",
 				"dependsOn": [
 					{
-						"activity": "Lookup1",
+						"activity": "Get Metadata1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -43,14 +37,13 @@
 				],
 				"userProperties": [],
 				"typeProperties": {
-					"items": {
-						"value": "@take(activity('Lookup1').output.value, 1)",
+					"expression": {
+						"value": "@greater(activity('Get Metadata1').output.columnCount, 3)",
 						"type": "Expression"
 					},
-					"isSequential": true,
-					"activities": [
+					"ifTrueActivities": [
 						{
-							"name": "Copy data1",
+							"name": "Copy data",
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
@@ -90,7 +83,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "DS_SQL_Employee_Lookup",
+									"referenceName": "sql_getdata",
 									"type": "DatasetReference",
 									"parameters": {
 										"Employee": "ForEachDemo"
@@ -99,10 +92,10 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "foreachoutput",
+									"referenceName": "output",
 									"type": "DatasetReference",
 									"parameters": {
-										"Employee": "output.csv"
+										"employee.csv": "source"
 									}
 								}
 							]

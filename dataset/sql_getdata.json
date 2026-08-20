@@ -1,0 +1,32 @@
+{
+	"name": "sql_getdata",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSQL_hemasql",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Employee": {
+				"type": "string",
+				"defaultValue": "ForEachDemo"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "name",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "ForEachDemo"
+		}
+	}
+}
