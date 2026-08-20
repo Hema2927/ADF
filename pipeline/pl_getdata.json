@@ -17,7 +17,10 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "sql_getdata",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Employee": "ForEachDemo"
+						}
 					},
 					"fieldList": [
 						"columnCount"
@@ -92,11 +95,8 @@
 							],
 							"outputs": [
 								{
-									"referenceName": "output",
-									"type": "DatasetReference",
-									"parameters": {
-										"employee.csv": "source"
-									}
+									"referenceName": "db_getdataoutput",
+									"type": "DatasetReference"
 								}
 							]
 						}
