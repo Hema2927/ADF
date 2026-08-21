@@ -1,0 +1,38 @@
+{
+	"name": "DF_Orders_Raw_To_Curated_ass",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_Raw_Orders_output",
+						"type": "DatasetReference"
+					},
+					"name": "RawOrders"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "flatten1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          has_more as boolean,",
+				"          next_cursor as string,",
+				"          orders as (created_at as timestamp, customer as (email as string, id as short), id as short, line_items as (price as double, quantity as short, sku as string)[])[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     inferDriftedColumnTypes: true,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> RawOrders",
+				"RawOrders foldDown(unroll(orders),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1"
+			]
+		}
+	}
+}
