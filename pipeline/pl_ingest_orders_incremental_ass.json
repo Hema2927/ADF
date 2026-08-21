@@ -1,0 +1,169 @@
+{
+	"name": "pl_ingest_orders_incremental_ass",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data flow1",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "DF_Orders_Raw_To_Curated_ass",
+						"type": "DataFlowReference",
+						"datasetParameters": {
+							"RawOrders": {
+								"orders.json": "raw"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			},
+			{
+				"name": "Copy data1",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "ParquetSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"wildcardFileName": "*.parquet",
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "ParquetReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "order_id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "order_id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "created_at",
+									"type": "DateTime"
+								},
+								"sink": {
+									"name": "order_date",
+									"type": "DateTime"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_id",
+									"type": "Int64"
+								},
+								"sink": {
+									"name": "customer_id",
+									"type": "Int64"
+								}
+							},
+							{
+								"source": {
+									"name": "customer_email",
+									"type": "String"
+								},
+								"sink": {
+									"name": "customer_email",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "sku",
+									"type": "String"
+								},
+								"sink": {
+									"name": "line_item_sku",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "quantity",
+									"type": "Int32"
+								},
+								"sink": {
+									"name": "line_item_qty",
+									"type": "Int32"
+								}
+							},
+							{
+								"source": {
+									"name": "price",
+									"type": "Double"
+								},
+								"sink": {
+									"name": "line_item_price",
+									"type": "Decimal"
+								}
+							}
+						],
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "DS_ADLS_Curated_Orders_ass",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "DS_SQL_Staging_Orders",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"annotations": []
+	}
+}

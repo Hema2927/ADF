@@ -1,0 +1,77 @@
+{
+	"name": "DF_Orders_Raw_To_Curated_ass",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_Raw_Orders_output",
+						"type": "DatasetReference"
+					},
+					"name": "RawOrders"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_Curated_Orders_ass",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
+			"transformations": [
+				{
+					"name": "flatten1"
+				},
+				{
+					"name": "flatten2"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          has_more as boolean,",
+				"          next_cursor as string,",
+				"          orders as (created_at as timestamp, customer as (email as string, id as short), id as short, line_items as (price as double, quantity as short, sku as string)[])[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'documentPerLine') ~> RawOrders",
+				"RawOrders foldDown(unroll(orders),",
+				"     mapColumn(",
+				"          has_more,",
+				"          next_cursor,",
+				"          order_id = orders.id,",
+				"          created_at = orders.created_at,",
+				"          customer_email = orders.customer.email,",
+				"          customer_id = orders.customer.id,",
+				"          line_items = orders.line_items",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 foldDown(unroll(line_items),",
+				"     mapColumn(",
+				"          order_id,",
+				"          created_at,",
+				"          customer_email,",
+				"          customer_id,",
+				"          sku = line_items.sku,",
+				"          quantity = line_items.quantity,",
+				"          price = line_items.price",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten2",
+				"flatten2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
+			]
+		}
+	}
+}
