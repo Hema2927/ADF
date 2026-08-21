@@ -53,13 +53,8 @@
 						"type": "DataFlowReference",
 						"parameters": {
 							"p_watermark": {
-								"value": "@replace(replace(activity('LookupWatermark').output.firstRow.WatermarkValue,'T',' '),'Z','')",
+								"value": "@replace(replace(string(activity('LookupWatermark').output.firstRow.WatermarkValue),'T',' '),'Z','')",
 								"type": "Expression"
-							}
-						},
-						"datasetParameters": {
-							"RawOrders": {
-								"orders.json": "raw"
 							}
 						}
 					},

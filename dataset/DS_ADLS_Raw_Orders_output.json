@@ -5,12 +5,6 @@
 			"referenceName": "AzureDataLakeStorage1",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"orders.json": {
-				"type": "string",
-				"defaultValue": "raw"
-			}
-		},
 		"annotations": [],
 		"type": "Json",
 		"typeProperties": {
