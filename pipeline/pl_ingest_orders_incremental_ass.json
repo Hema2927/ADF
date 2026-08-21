@@ -50,13 +50,7 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Orders_Raw_To_Curated_ass",
-						"type": "DataFlowReference",
-						"parameters": {
-							"p_watermark": {
-								"value": "@replace(replace(string(activity('LookupWatermark').output.firstRow.WatermarkValue),'T',' '),'Z','')",
-								"type": "Expression"
-							}
-						}
+						"type": "DataFlowReference"
 					},
 					"compute": {
 						"coreCount": 8,
