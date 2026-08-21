@@ -1,0 +1,20 @@
+{
+	"name": "DS_ADLS_Raw_Orders_output",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "orders.json",
+				"folderPath": "raw",
+				"fileSystem": "assessment"
+			}
+		},
+		"schema": {}
+	}
+}

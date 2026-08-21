@@ -1,0 +1,20 @@
+{
+	"name": "DS_ADLS_Curated_Orders_ass",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureDataLakeStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "curatedass",
+				"fileSystem": "assessment"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}
