@@ -12,13 +12,30 @@
 					"name": "RawOrders"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_ADLS_Curated_Orders_ass",
+						"type": "DatasetReference"
+					},
+					"name": "sink"
+				}
+			],
 			"transformations": [
 				{
 					"name": "flatten1"
+				},
+				{
+					"name": "flatten2"
+				},
+				{
+					"name": "filter1"
 				}
 			],
 			"scriptLines": [
+				"parameters{",
+				"     p_watermark as string ('2026-08-20 00:00:00')",
+				"}",
 				"source(output(",
 				"          has_more as boolean,",
 				"          next_cursor as string,",
@@ -30,8 +47,35 @@
 				"     ignoreNoFilesFound: false,",
 				"     documentForm: 'documentPerLine') ~> RawOrders",
 				"RawOrders foldDown(unroll(orders),",
+				"     mapColumn(",
+				"          created_at = orders.created_at,",
+				"          customer_id = orders.customer.id,",
+				"          customer_email = orders.customer.email,",
+				"          line_items = orders.line_items",
+				"     ),",
 				"     skipDuplicateMapInputs: false,",
-				"     skipDuplicateMapOutputs: false) ~> flatten1"
+				"     skipDuplicateMapOutputs: false) ~> flatten1",
+				"flatten1 foldDown(unroll(line_items),",
+				"     mapColumn(",
+				"          customer_id,",
+				"          created_at,",
+				"          customer_email,",
+				"          sku = line_items.sku,",
+				"          quantity = line_items.quantity,",
+				"          price = line_items.price",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> flatten2",
+				"flatten2 filter(!isNull(created_at) &&",
+				"created_at > toTimestamp($p_watermark, 'yyyy-MM-dd HH:mm:ss')) ~> filter1",
+				"filter1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> sink"
 			]
 		}
 	}
