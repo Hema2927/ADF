@@ -1,0 +1,12 @@
+{
+	"name": "LS_REST_OrdersAPI_ass",
+	"properties": {
+		"annotations": [],
+		"type": "RestService",
+		"typeProperties": {
+			"url": "https://enterprise-orders-api-hema-cbf7c6fweucrckay.centralindia-01.azurewebsites.net",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
