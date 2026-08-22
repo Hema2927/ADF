@@ -195,6 +195,78 @@
 						"type": "DatasetReference"
 					}
 				]
+			},
+			{
+				"name": "MergeToCurated",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Copy data1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_MergeOrders]"
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSQL_hemasql",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "UpdateWatermark",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "MergeToCurated",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_UpdateWatermark]",
+					"storedProcedureParameters": {
+						"SourceSystem": {
+							"value": "SourceAPI",
+							"type": "String"
+						},
+						"EntityName": {
+							"value": "Orders",
+							"type": "String"
+						},
+						"NewWatermark": {
+							"value": "@utcnow()",
+							"type": "String"
+						},
+						"RowsExtracted": {
+							"value": null,
+							"type": "Int16"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSQL_hemasql",
+					"type": "LinkedServiceReference"
+				}
 			}
 		],
 		"annotations": []
