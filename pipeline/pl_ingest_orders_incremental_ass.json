@@ -63,7 +63,7 @@
 				"type": "Copy",
 				"dependsOn": [
 					{
-						"activity": "Data flow1",
+						"activity": "TruncateStaging",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -228,7 +228,7 @@
 				"type": "SqlServerStoredProcedure",
 				"dependsOn": [
 					{
-						"activity": "MergeToCurated",
+						"activity": "LookupRows",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -258,10 +258,69 @@
 							"type": "String"
 						},
 						"RowsExtracted": {
-							"value": null,
+							"value": "@activity('LookupRows').output.firstRow.RowsExtracted",
 							"type": "Int16"
 						}
 					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSQL_hemasql",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "LookupRows",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "MergeToCurated",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT COUNT(*) AS RowsExtracted\nFROM dbo.stg_Orders;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQL_Staging_Orders",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "TruncateStaging",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "Data flow1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[usp_TruncateStagingOrders]"
 				},
 				"linkedServiceName": {
 					"referenceName": "AzureSQL_hemasql",
