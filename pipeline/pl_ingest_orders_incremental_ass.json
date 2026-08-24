@@ -3,7 +3,7 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "lookup1",
+				"name": "Lookup1",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -32,7 +32,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "lookup1",
+						"activity": "Web1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -51,7 +51,10 @@
 						"referenceName": "DF_Orders_Raw_To_Curated_ass",
 						"type": "DataFlowReference",
 						"parameters": {
-							"p_watermark": "'2026-08-20 00:00:00'"
+							"p_watermark": {
+								"value": "'@{string(activity('Lookup1').output.firstRow.WatermarkValue)}'",
+								"type": "Expression"
+							}
 						}
 					},
 					"compute": {
@@ -402,6 +405,30 @@
 				"linkedServiceName": {
 					"referenceName": "AzureSQL_hemasql",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://enterprise-orders-api-hema-cbf7c6fweucrckay.centralindia-01.azurewebsites.net"
 				}
 			}
 		],
