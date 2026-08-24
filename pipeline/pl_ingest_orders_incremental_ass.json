@@ -32,7 +32,7 @@
 				"type": "ExecuteDataFlow",
 				"dependsOn": [
 					{
-						"activity": "Lookup1",
+						"activity": "Web1",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -49,7 +49,13 @@
 				"typeProperties": {
 					"dataflow": {
 						"referenceName": "DF_Orders_Raw_To_Curated_ass",
-						"type": "DataFlowReference"
+						"type": "DataFlowReference",
+						"parameters": {
+							"p_watermark": {
+								"value": "'@{string(activity('Lookup1').output.firstRow.WatermarkValue)}'",
+								"type": "Expression"
+							}
+						}
 					},
 					"compute": {
 						"coreCount": 8,
@@ -254,11 +260,17 @@
 							"type": "String"
 						},
 						"NewWatermark": {
-							"value": "@utcnow()",
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"RowsExtracted": {
-							"value": "@activity('LookupRows').output.firstRow.RowsExtracted",
+							"value": {
+								"value": "@activity('LookupRows').output.firstRow.RowsExtracted",
+								"type": "Expression"
+							},
 							"type": "Int16"
 						}
 					}
@@ -350,7 +362,10 @@
 					"storedProcedureName": "[dbo].[usp_LogETLError]",
 					"storedProcedureParameters": {
 						"PipelineName": {
-							"value": "@pipeline().Pipeline",
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"ActivityName": {
@@ -358,19 +373,31 @@
 							"type": "String"
 						},
 						"RunId": {
-							"value": "@pipeline().RunId",
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"ErrorCode": {
-							"value": "@activity('UpdateWatermark').error.errorCode",
+							"value": {
+								"value": "@activity('UpdateWatermark').error.errorCode",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"ErrorMessage": {
-							"value": "@activity('UpdateWatermark').error.message",
+							"value": {
+								"value": "@activity('UpdateWatermark').error.message",
+								"type": "Expression"
+							},
 							"type": "String"
 						},
 						"AdditionalInfo": {
-							"value": "@string(activity('UpdateWatermark').error)",
+							"value": {
+								"value": "@string(activity('UpdateWatermark').error)",
+								"type": "Expression"
+							},
 							"type": "String"
 						}
 					}
@@ -378,6 +405,30 @@
 				"linkedServiceName": {
 					"referenceName": "AzureSQL_hemasql",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Web1",
+				"type": "WebActivity",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"method": "GET",
+					"url": "https://enterprise-orders-api-hema-cbf7c6fweucrckay.centralindia-01.azurewebsites.net"
 				}
 			}
 		],
