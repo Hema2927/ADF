@@ -428,7 +428,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"method": "GET",
-					"url": "https://enterprise-orders-api-hema-cbf7c6fweucrckay.centralindia-01.azurewebsites.net"
+					"url": "https://enterprise-orders-api-hema-cbf7c6fweucrckay.centralindia-01.azurewebsites.net/v1/orders"
 				}
 			}
 		],
