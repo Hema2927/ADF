@@ -3,7 +3,7 @@
 	"properties": {
 		"description": "Manual trigger for Orders pipeline testing",
 		"annotations": [],
-		"runtimeState": "Started",
+		"runtimeState": "Stopped",
 		"pipelines": [
 			{
 				"pipelineReference": {
