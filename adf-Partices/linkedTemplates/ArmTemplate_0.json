@@ -1064,7 +1064,7 @@
 			"properties": {
 				"description": "Runs Orders incremental pipeline daily",
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
@@ -1100,7 +1100,7 @@
 			"properties": {
 				"description": "Manual trigger for Orders pipeline testing",
 				"annotations": [],
-				"runtimeState": "Started",
+				"runtimeState": "Stopped",
 				"pipelines": [
 					{
 						"pipelineReference": {
